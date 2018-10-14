@@ -11,22 +11,23 @@ class SimpleDriver extends Component {
     val b_tmds = out Bits(10 bits)
   }
 
-  val x = Reg(UInt(10 bits)) init 0
+  val x = Reg(UInt(11 bits)) init 0
   val y = Reg(UInt(10 bits)) init 0
   val r_enc = new TmdsEncoder
   val g_enc = new TmdsEncoder
   val b_enc = new TmdsEncoder
 
-  when (x === 799) {
+  // http://read.pudn.com/downloads222/doc/1046129/CEA861D.pdf
+  when (x === 1649) {
     x := 0
-    y := (y < 524) ? (y + 1) | 0
+    y := (y < 749) ? (y + 1) | 0
   } otherwise {
     x := x + 1
   }
 
-  val hSync = (x >= 656) && (x < 752)
-  val vSync = (y >= 490) && (y < 492)
-  val drawArea = (x < 640) && (y < 480)
+  val hSync = (x >= 1390) && (x < 1430)
+  val vSync = (y >= 725) && (y < 730)
+  val drawArea = (x < 1280) && (y < 720)
 
   r_enc.io.disp_ena := drawArea
   r_enc.io.control := 0

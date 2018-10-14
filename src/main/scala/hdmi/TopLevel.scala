@@ -15,17 +15,22 @@ class TopLevel extends Component {
   noIoPrefix()
 
   val clkCtrl = new Area {
-    // 125MHz -> 250MHz, 25MHz
-    val clkWiz = new ClockWizard(2, divs = Array(8, 40), masterMult = 8, clkInPeriod = 8.0)
-    clkWiz.io.clkIn := clockDomain.readClockWire
-    val reset = clockDomain.readResetWire || !clkWiz.io.locked
+    // 125MHz -> 20MHz
+    val clkWiz1 = new ClockWizard(divs = Array(50), masterMult = 8, clkInPeriod = 8.0)
+    clkWiz1.io.clkIn := clockDomain.readClockWire
+
+    // 20MHz -> ~371.25MHz, ~74.25MHz
+    val clkWiz2 = new ClockWizard(numClocks = 2, divs = Array(2, 10), masterMult = 37.125, clkInPeriod = 50.0)
+    clkWiz2.io.clkIn := clkWiz1.io.clkOut(0)
+
+    val reset = clockDomain.readResetWire || !clkWiz1.io.locked || !clkWiz2.io.locked
 
     val hdmiClockDomain = ClockDomain.internal("hdmi")
-    hdmiClockDomain.clock := clkWiz.io.clkOut(0)
+    hdmiClockDomain.clock := clkWiz2.io.clkOut(0)
     hdmiClockDomain.reset := reset
 
     val pixelClockDomain = ClockDomain.internal("pixel")
-    pixelClockDomain.clock := clkWiz.io.clkOut(1)
+    pixelClockDomain.clock := clkWiz2.io.clkOut(1)
     pixelClockDomain.reset := reset
 
     // rising edge is synchronized
