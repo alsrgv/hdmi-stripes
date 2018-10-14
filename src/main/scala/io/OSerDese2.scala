@@ -52,15 +52,18 @@ object OSerDes10 {
     val master = new OSerDese2(dataWidth = 10, serDesMode = SerDesMode.MASTER)
     val slave = new OSerDese2(dataWidth = 10, serDesMode = SerDesMode.SLAVE)
 
-    // Reset deassert must be synchronized with CLKDIV
-    val rstReg = RegNext(slowClockDomain.readResetWire) init True
+    val slowClockingArea = new ClockingArea(slowClockDomain) {
+      // Reset deassert must be synchronized with CLKDIV
+      val rstReg = RegNext(ClockDomain.current.readResetWire) init True
+    }
+
     master.io.CLK := ClockDomain.current.readClockWire
     master.io.CLKDIV := slowClockDomain.readClockWire
-    master.io.RST := rstReg
+    master.io.RST := slowClockingArea.rstReg
     master.io.OCE := True
     slave.io.CLK := ClockDomain.current.readClockWire
     slave.io.CLKDIV := slowClockDomain.readClockWire
-    slave.io.RST := rstReg
+    slave.io.RST := slowClockingArea.rstReg
     slave.io.OCE := True
 
     master.io.D1 := data(0)
