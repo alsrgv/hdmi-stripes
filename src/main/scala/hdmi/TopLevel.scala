@@ -19,8 +19,8 @@ class TopLevel extends Component {
     val clkWiz1 = new ClockWizard(divs = Array(50), masterMult = 8, clkInPeriod = 8.0)
     clkWiz1.io.clkIn := clockDomain.readClockWire
 
-    // 20MHz -> ~371.25MHz, ~74.25MHz
-    val clkWiz2 = new ClockWizard(numClocks = 2, divs = Array(2, 10), masterMult = 37.125, clkInPeriod = 50.0)
+    // 20MHz -> ~742.5MHz, ~148.5MHz
+    val clkWiz2 = new ClockWizard(numClocks = 2, divs = Array(1, 5), masterMult = 37.125, clkInPeriod = 50.0)
     clkWiz2.io.clkIn := clkWiz1.io.clkOut(0)
 
     val reset = clockDomain.readResetWire || !clkWiz1.io.locked || !clkWiz2.io.locked
