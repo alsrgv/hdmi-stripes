@@ -1,0 +1,11 @@
+project
+simWorkspace
+target
+tmp
+*.log
+*.jou
+*.bit
+.Xil
+.idea
+top_level.v
+usage_statistics_webtalk.*
